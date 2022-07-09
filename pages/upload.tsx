@@ -1,9 +1,13 @@
+import { SanityAssetDocument } from "@sanity/client";
 import React, { useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import { client } from "../utils/client";
 
 const Upload = () => {
 	const [isLoading, setIsLoading] = useState(false);
-	const [videoAsset, setVideoAsset] = useState();
+	const [videoAsset, setVideoAsset] = useState<
+		SanityAssetDocument | undefined
+	>();
 	const [wrongFileType, setWrongFileType] = useState(false);
 
 	const uploadVideo = async (e: any) => {
@@ -11,6 +15,15 @@ const Upload = () => {
 		const fileTypes = ["video/mp4", "video/webm", "video/ogg"];
 
 		if (fileTypes.includes(selectedFile.type)) {
+			client.assets
+				.upload("file", selectedFile, {
+					contentType: selectedFile.type,
+					filename: selectedFile.name,
+				})
+				.then((data) => {
+					setVideoAsset(data);
+					setIsLoading(false);
+				});
 		} else {
 			setIsLoading(false);
 			setWrongFileType(true);
@@ -33,7 +46,16 @@ const Upload = () => {
 						) : (
 							<div>
 								{videoAsset ? (
-									<div></div>
+									<div>
+										<video
+											src={videoAsset.url}
+											loop
+											controls
+											className='rounded-xl h-[450px] mt-16 bg-black'
+										>
+											{" "}
+										</video>
+									</div>
 								) : (
 									<label className='cursor-pointer'>
 										<div className='flex flex-col items-center justify-center h-full'>
