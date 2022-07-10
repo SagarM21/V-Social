@@ -22,7 +22,7 @@ const Detail = ({ postDetails }: IProps) => {
 	const [playing, setPlaying] = useState(false);
 	const [isVideoMuted, setIsVideoMuted] = useState(false);
 	const videoRef = useRef<HTMLVideoElement>(null);
-	const { userProfile } = useAuthStore();
+	const { userProfile }: any = useAuthStore();
 	const router = useRouter();
 
 	if (!post) return null;
@@ -42,6 +42,14 @@ const Detail = ({ postDetails }: IProps) => {
 			videoRef.current.muted = isVideoMuted;
 		}
 	}, [post, isVideoMuted]);
+
+	const handleLike = async (like: boolean) => {
+		const response = await axios.put(`${BASE_URL}/api/like`, {
+			userId: userProfile._id,
+			postId: post._id,
+			like,
+		});
+	};
 
 	return (
 		<div className='flex w-full absolute left-0 top-0 bg-white flex-wrap lg:flex-nowrap'>
@@ -121,7 +129,14 @@ const Detail = ({ postDetails }: IProps) => {
 				<p className='px-10 text-lg text-gray-600'>{post.caption}</p>
 
 				{/* LIKES */}
-				<div className='mt-10 px-10'>{userProfile && <LikeButton />}</div>
+				<div className='mt-10 px-10'>
+					{userProfile && (
+						<LikeButton
+							handleLike={() => handleLike(true)}
+							handleDislike={() => handleLike(false)}
+						/>
+					)}
+				</div>
 				<Comments />
 			</div>
 		</div>
