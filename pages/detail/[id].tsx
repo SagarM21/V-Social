@@ -1,9 +1,10 @@
 import axios from "axios";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Video } from "../../types";
 import { BASE_URL } from "../../utils";
 import { MdOutlineCancel } from "react-icons/md";
 import { BsFillPlayFill } from "react-icons/bs";
+import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
 
 interface IProps {
 	postDetails: Video;
@@ -12,6 +13,7 @@ interface IProps {
 const Detail = ({ postDetails }: IProps) => {
 	const [post, setPost] = useState(postDetails);
 	const [playing, setPlaying] = useState(false);
+	const [isVideoMuted, setIsVideoMuted] = useState(false);
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	if (!post) return null;
@@ -25,6 +27,13 @@ const Detail = ({ postDetails }: IProps) => {
 			setPlaying(true);
 		}
 	};
+
+	useEffect(() => {
+		if (post && videoRef?.current) {
+			videoRef.current.muted = isVideoMuted;
+		}
+	}, [post, isVideoMuted]);
+
 	return (
 		<div className='flex w-full absolute left-0 top-0 bg-white flex-wrap lg:flex-nowrap'>
 			<div className='relative flex-2 w-[1000px] lg:w-9/12 flex justify-center items-center bg-blurred-img bg-no-repeat bg-cover bg-center '>
@@ -54,6 +63,17 @@ const Detail = ({ postDetails }: IProps) => {
 							</button>
 						)}
 					</div>
+				</div>
+				<div className='absolute bottom-5 lg:bottom-10 right-5  lg:right-10 cursor-pointer'>
+					{isVideoMuted ? (
+						<button onClick={() => setIsVideoMuted(false)}>
+							<HiVolumeOff className='text-white text-2xl lg:text-4xl' />
+						</button>
+					) : (
+						<button onClick={() => setIsVideoMuted(true)}>
+							<HiVolumeUp className='text-white text-2xl lg:text-4xl' />
+						</button>
+					)}
 				</div>
 			</div>
 		</div>
