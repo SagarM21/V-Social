@@ -27,6 +27,12 @@ const Detail = ({ postDetails }: IProps) => {
 	const { userProfile }: any = useAuthStore();
 	const router = useRouter();
 
+	useEffect(() => {
+		if (post && videoRef?.current) {
+			videoRef.current.muted = isVideoMuted;
+		}
+	}, [post, isVideoMuted]);
+
 	if (!post) return null;
 
 	const onVideoClick = () => {
@@ -39,12 +45,6 @@ const Detail = ({ postDetails }: IProps) => {
 		}
 	};
 
-	useEffect(() => {
-		if (post && videoRef?.current) {
-			videoRef.current.muted = isVideoMuted;
-		}
-	}, [post, isVideoMuted]);
-
 	const handleLike = async (like: boolean) => {
 		const { data } = await axios.put(`${BASE_URL}/api/like`, {
 			userId: userProfile._id,
@@ -55,7 +55,7 @@ const Detail = ({ postDetails }: IProps) => {
 		setPost({ ...post, likes: data.likes });
 	};
 
-	const addComment = async (e) => {
+	const addComment = async (e: { preventDefault: () => void }) => {
 		e.preventDefault();
 
 		if (userProfile && comment) {
@@ -156,6 +156,7 @@ const Detail = ({ postDetails }: IProps) => {
 							handleLike={() => handleLike(true)}
 							handleDislike={() => handleLike(false)}
 							likes={post.likes}
+							flex='flex'
 						/>
 					)}
 				</div>

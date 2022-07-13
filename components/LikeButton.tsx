@@ -6,9 +6,10 @@ interface IProps {
 	handleLike: () => void;
 	handleDislike: () => void;
 	likes: any[];
+	flex: string;
 }
 
-const LikeButton = ({ handleLike, handleDislike, likes }: IProps) => {
+const LikeButton = ({ handleLike, handleDislike, likes, flex }: IProps) => {
 	const [alreadyLiked, setAlreadyLiked] = useState(false);
 	const { userProfile }: any = useAuthStore();
 	const filterLikes = likes.filter((item) => item._ref === userProfile?._id);
