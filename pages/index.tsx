@@ -10,8 +10,6 @@ interface IProps {
 }
 
 const Home = ({ videos }: IProps) => {
-	console.log(videos);
-
 	return (
 		<div className='flex flex-col gap-10 videos h-full'>
 			{videos.length ? (
@@ -23,13 +21,26 @@ const Home = ({ videos }: IProps) => {
 	);
 };
 
-export const getServerSideProps = async () => {
-	// fetch new videos every time when we refresh the page
-	const { data } = await axios.get(`${BASE_URL}/api/post`);
+export const getServerSideProps = async ({
+	query: { topic },
+}: {
+	query: { topic: string };
+}) => {
+	let response = null;
+
+	if (topic) {
+		response = await axios.get(`${BASE_URL}/api/discover/${topic}`);
+		console.log(topic);
+	} else {
+		// fetch new videos every time when we refresh the page
+		console.log(topic);
+
+		response = await axios.get(`${BASE_URL}/api/post`);
+	}
 
 	return {
 		props: {
-			videos: data,
+			videos: response.data,
 		},
 	};
 };
